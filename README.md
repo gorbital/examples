@@ -18,15 +18,21 @@ stay in the library repository ([ADR-0093](https://github.com/gorbital/gorbital/
 | [`byo-identity`](byo-identity/) | **Not written yet** — a v0.3 deliverable. The smallest proof that none of gorbital's identity code is required: no gorbital sign-in, no gorbital organisations | gorbital v0.3.0 |
 | [`mobile-backend`](mobile-backend/) | `modules/jwt` wired by hand as the app's authenticator: an external identity provider's claims become actors and permissions, scoped per user, tested against a local JWKS | gorbital v0.3.0 |
 | [`payments`](payments/) | Receiving payment webhooks: `guard.Webhook` with a `webhook.NewStandard` verifier, idempotency keyed on the provider's event ID, and a job enqueued with `jobs.Client.InsertTx` inside the write's transaction | gorbital v0.3.0 |
-| [`shelfie`](shelfie/) | A reading-tracker API: `gorbital.Main`, a module in four layers with one file per operation, `gorbitaltest`. **Candidate for retirement** — see below | gorbital v0.3.0 |
 | [`invoicing`](invoicing/) | Multi-tenant invoicing: `orgshttp`, a module generated with `orb gen module --org`, and a row-level security migration tested as a database role without bypass. **Candidate for retirement** — see below | gorbital v0.3.0 |
 | [`admin-tool`](admin-tool/) | An internal admin tool: the built-in `/ops` and flags modules, a module's runtime setting, a client flag, retention and a named rate limiter. **Candidate for retirement** — see below | gorbital v0.3.0 |
 
-Shelfie, invoicing and admin-tool overlap Plateful and should be folded into
-it or retired. That is an editorial change to a dozen documentation pages and
-a judgement about what each chapter teaches, so it was deliberately kept out
-of the move that created this repository and gets its own decision
-(ADR-0093, decision 9). Until then they are built and tested like the rest.
+Invoicing and admin-tool overlap Plateful and should be folded into it or
+retired. That is an editorial change to a dozen documentation pages and a
+judgement about what each chapter teaches, so it was deliberately kept out of
+the move that created this repository and gets its own decision (ADR-0093,
+decision 9). Until then they are built and tested like the rest.
+
+Shelfie, the reading-tracker API the Examples chapters teach, is **not**
+here. It came across in the move and went back: the library's CLI compares
+`orb gen module`'s output with its shelves and clubbooks modules file by
+file, and three more of the CLI's test files copy the whole application, so
+it is a test fixture and lives in the library repository at
+`examples/shelfie`.
 
 ## Running an application
 

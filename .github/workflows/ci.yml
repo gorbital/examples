@@ -67,7 +67,7 @@ jobs:
       fail-fast: false
       matrix:
         # byo-identity has no go.mod yet; add it when its code lands.
-        app: [admin-tool, invoicing, mobile-backend, payments, plateful, shelfie]
+        app: [admin-tool, invoicing, mobile-backend, payments, plateful]
     defaults:
       run:
         working-directory: examples/${{ matrix.app }}
@@ -143,7 +143,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [admin-tool, invoicing, mobile-backend, payments, plateful, shelfie]
+        app: [admin-tool, invoicing, mobile-backend, payments, plateful]
     defaults:
       run:
         working-directory: examples/${{ matrix.app }}
