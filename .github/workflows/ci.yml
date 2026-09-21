@@ -1,0 +1,183 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Nightly, against the library's main.
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # The library ref the applications build against.
+  #
+  # Every application requires gorbital.dev@v0.3.0, which is not published
+  # yet, so the root go.work replaces every library module with ../gorbital
+  # and this job checks the library out there. The day v0.3.0 is published,
+  # delete the replace block in go.work and the "check out the library" step
+  # in the apps job below: the applications then build against the release,
+  # from the module proxy, and only the nightly job needs a checkout.
+  GORBITAL_REF: main
+
+jobs:
+  apps:
+    name: ${{ matrix.app }}
+    # The nightly job below covers the scheduled run.
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    # PostgreSQL always comes from Docker, as in the library (ADR-0028).
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: gorbital
+          POSTGRES_PASSWORD: gorbital
+          POSTGRES_DB: gorbital
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U gorbital -d gorbital"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+      mailpit:
+        image: axllent/mailpit:v1.27
+        ports:
+          - 1025:1025
+          - 8025:8025
+        options: >-
+          --health-cmd "/mailpit readyz"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+    env:
+      GORBITAL_TEST_DATABASE_URL: postgres://gorbital:gorbital@localhost:5432/gorbital?sslmode=disable
+      GORBITAL_REQUIRE_DB: "1"
+      GORBITAL_TEST_MAILPIT_SMTP: localhost:1025
+      GORBITAL_TEST_MAILPIT_URL: http://localhost:8025
+      GORBITAL_REQUIRE_MAILPIT: "1"
+    strategy:
+      fail-fast: false
+      matrix:
+        # byo-identity has no go.mod yet; add it when its code lands.
+        app: [admin-tool, invoicing, mobile-backend, payments, plateful, shelfie]
+    defaults:
+      run:
+        working-directory: examples/${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: examples
+          persist-credentials: false
+      # go.work replaces every gorbital.dev module with ../gorbital, relative
+      # to the root of this repository, so the library lands beside it.
+      - name: check out the library
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: gorbital/gorbital
+          ref: ${{ env.GORBITAL_REF }}
+          path: gorbital
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.26.x"
+          cache-dependency-path: "**/go.sum"
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then echo "$unformatted"; exit 1; fi
+      - name: vet
+        run: go vet ./...
+      - name: build
+        run: go build ./...
+      - name: test
+        # Go's default -timeout is 10m, which a slow runner beats on the
+        # bigger applications' database tests.
+        run: go test -race -timeout 40m ./...
+
+  nightly:
+    name: nightly ${{ matrix.app }} (library main)
+    # A pull request to the library no longer builds these applications, so
+    # one can rot silently against an unreleased library. This is the
+    # mitigation: it moves detection from "immediately" to "within a day"
+    # (ADR-0093, Consequences).
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: gorbital
+          POSTGRES_PASSWORD: gorbital
+          POSTGRES_DB: gorbital
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U gorbital -d gorbital"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+      mailpit:
+        image: axllent/mailpit:v1.27
+        ports:
+          - 1025:1025
+          - 8025:8025
+        options: >-
+          --health-cmd "/mailpit readyz"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+    env:
+      GORBITAL_TEST_DATABASE_URL: postgres://gorbital:gorbital@localhost:5432/gorbital?sslmode=disable
+      GORBITAL_REQUIRE_DB: "1"
+      GORBITAL_TEST_MAILPIT_SMTP: localhost:1025
+      GORBITAL_TEST_MAILPIT_URL: http://localhost:8025
+      GORBITAL_REQUIRE_MAILPIT: "1"
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [admin-tool, invoicing, mobile-backend, payments, plateful, shelfie]
+    defaults:
+      run:
+        working-directory: examples/${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: examples
+          persist-credentials: false
+      - name: check out the library's main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: gorbital/gorbital
+          ref: main
+          path: gorbital
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.26.x"
+          cache-dependency-path: "**/go.sum"
+      # go.work already replaces every gorbital.dev module with ../gorbital,
+      # which is the checkout above; the applications build against main
+      # whatever version their go.mod requires. Once the replace block is
+      # gone from go.work, put it back here for this job alone with
+      # `go work edit -replace`, one line per module.
+      - name: the workspace points at the library checkout
+        working-directory: examples
+        run: go work edit -json | grep -q '"New"' || { echo "go.work no longer replaces the library; add the replace directives for this job"; exit 1; }
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then echo "$unformatted"; exit 1; fi
+      - name: vet
+        run: go vet ./...
+      - name: build
+        run: go build ./...
+      - name: test
+        run: go test -race -timeout 40m ./...
