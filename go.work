@@ -1,7 +1,7 @@
 go 1.26.0
 
 // Every application in this repository, one Go module each. byo-identity has
-// no go.mod yet (it is a v0.3 deliverable); add it here when its code lands.
+// no go.mod yet (it is a v0.2.2 deliverable); add it here when its code lands.
 use (
 	./admin-tool
 	./invoicing
@@ -10,7 +10,7 @@ use (
 	./plateful
 )
 
-// The applications require the published gorbital modules at v0.3.0, which is
+// The applications require the published gorbital modules at v0.2.2, which is
 // not on the module proxy yet, so the workspace points them at a checkout of
 // the library beside this one:
 //
@@ -21,12 +21,12 @@ use (
 //
 // These are replace directives and not `go work use` lines on purpose. A use
 // line makes the library a main module of the workspace, but the go command
-// still resolves the version each application's go.mod requires — v0.3.0 —
+// still resolves the version each application's go.mod requires — v0.2.2 —
 // from the proxy while it loads the module graph, and fails before it builds
 // anything. A replace directive in go.work is the only thing that keeps an
 // unpublished version out of the resolver.
 //
-// Delete this whole block the day gorbital v0.3.0 is published. The
+// Delete this whole block the day gorbital v0.2.2 is published. The
 // applications then build against the release, with no local checkout, which
 // is the point of them.
 //

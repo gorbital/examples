@@ -18,9 +18,9 @@ concurrency:
 env:
   # The library ref the applications build against.
   #
-  # Every application requires gorbital.dev@v0.3.0, which is not published
+  # Every application requires gorbital.dev@v0.2.2, which is not published
   # yet, so the root go.work replaces every library module with ../gorbital
-  # and this job checks the library out there. The day v0.3.0 is published,
+  # and this job checks the library out there. The day v0.2.2 is published,
   # delete the replace block in go.work and the "check out the library" step
   # in the apps job below: the applications then build against the release,
   # from the module proxy, and only the nightly job needs a checkout.
