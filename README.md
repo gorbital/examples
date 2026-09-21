@@ -14,12 +14,12 @@ stay in the library repository ([ADR-0093](https://github.com/gorbital/gorbital/
 
 | App | What it shows | Builds against |
 |---|---|---|
-| [`plateful`](plateful/) | The flagship, and the app the tutorial chapters teach: a restaurant delivery platform where a restaurant *is* an organisation, with platform staff, restaurant staff, and customers and couriers who belong to no organisation — eight modules, an order state machine, a transaction across four tables, a custom guard, jobs, file storage and outbound webhooks | gorbital v0.3.0 |
-| [`byo-identity`](byo-identity/) | **Not written yet** — a v0.3.0 deliverable. The smallest proof that none of gorbital's identity code is required: no gorbital sign-in, no gorbital organisations | gorbital v0.3.0 |
-| [`mobile-backend`](mobile-backend/) | `modules/jwt` wired by hand as the app's authenticator: an external identity provider's claims become actors and permissions, scoped per user, tested against a local JWKS | gorbital v0.3.0 |
-| [`payments`](payments/) | Receiving payment webhooks: `guard.Webhook` with a `webhook.NewStandard` verifier, idempotency keyed on the provider's event ID, and a job enqueued with `jobs.Client.InsertTx` inside the write's transaction | gorbital v0.3.0 |
-| [`invoicing`](invoicing/) | Multi-tenant invoicing: `orgshttp`, a module generated with `orb gen module --org`, and a row-level security migration tested as a database role without bypass. **Candidate for retirement** — see below | gorbital v0.3.0 |
-| [`admin-tool`](admin-tool/) | An internal admin tool: the built-in `/ops` and flags modules, a module's runtime setting, a client flag, retention and a named rate limiter. **Candidate for retirement** — see below | gorbital v0.3.0 |
+| [`plateful`](plateful/) | The flagship, and the app the tutorial chapters teach: a restaurant delivery platform where a restaurant *is* an organisation, with platform staff, restaurant staff, and customers and couriers who belong to no organisation — eight modules, an order state machine, a transaction across four tables, a custom guard, jobs, file storage and outbound webhooks | gorbital v0.3.1 |
+| [`byo-identity`](byo-identity/) | **Not written yet** — a v0.3.1 deliverable. The smallest proof that none of gorbital's identity code is required: no gorbital sign-in, no gorbital organisations | gorbital v0.3.1 |
+| [`mobile-backend`](mobile-backend/) | `modules/jwt` wired by hand as the app's authenticator: an external identity provider's claims become actors and permissions, scoped per user, tested against a local JWKS | gorbital v0.3.1 |
+| [`payments`](payments/) | Receiving payment webhooks: `guard.Webhook` with a `webhook.NewStandard` verifier, idempotency keyed on the provider's event ID, and a job enqueued with `jobs.Client.InsertTx` inside the write's transaction | gorbital v0.3.1 |
+| [`invoicing`](invoicing/) | Multi-tenant invoicing: `orgshttp`, a module generated with `orb gen module --org`, and a row-level security migration tested as a database role without bypass. **Candidate for retirement** — see below | gorbital v0.3.1 |
+| [`admin-tool`](admin-tool/) | An internal admin tool: the built-in `/ops` and flags modules, a module's runtime setting, a client flag, retention and a named rate limiter. **Candidate for retirement** — see below | gorbital v0.3.1 |
 
 Invoicing and admin-tool overlap Plateful and should be folded into it or
 retired. That is an editorial change to a dozen documentation pages and a
@@ -58,11 +58,11 @@ PostgreSQL, and some want Mailpit, exactly as the library's do.
 
 ## Building against the library
 
-Every application requires the published `gorbital.dev` modules at **v0.3.0**.
+Every application requires the published `gorbital.dev` modules at **v0.3.1**.
 None of them replaces a module with a relative path any more, which is the
 point: they prove that the released library works, not that one checkout does.
 
-**v0.3.0 is not published yet.** Until it is, nothing here builds from the
+**v0.3.1 is not published yet.** Until it is, nothing here builds from the
 module proxy alone, and the root [`go.work`](go.work) points every application
 at a checkout of the library beside this one:
 
@@ -75,10 +75,10 @@ Without that directory every `go` command in this repository fails with
 
 A `go work use ../gorbital …` line is **not** enough, and this is worth
 knowing: a `use` line makes the library a main module of the workspace, but
-the go command still resolves the version each `go.mod` requires — v0.3.0 —
+the go command still resolves the version each `go.mod` requires — v0.3.1 —
 from the proxy while it loads the module graph, and fails before it builds
 anything. `go.work` carries `replace` directives for that reason. The day
-v0.3.0 is published, delete the `replace` block and the applications build
+v0.3.1 is published, delete the `replace` block and the applications build
 against the release with no local checkout.
 
 To develop an application against the library, edit both trees and build: the
@@ -127,8 +127,8 @@ the lines between the markers are shown without the markers. The library's
 `docscheck` resolves those markers against a checkout of this repository at
 the tag pinned in its `docs/examples.json`, and fails when a file or a marker
 has gone — so renaming or deleting a region breaks a build rather than a page.
-This repository is tagged in lockstep with the library: `v0.3.0` here is the
-counterpart of the library's `v0.3.0`.
+This repository is tagged in lockstep with the library: `v0.3.1` here is the
+counterpart of the library's `v0.3.1`.
 
 ## Versions and layout
 

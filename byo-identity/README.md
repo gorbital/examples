@@ -1,7 +1,7 @@
 # byo-identity
 
 **Not written yet.** This directory is a placeholder: the application is a
-v0.3.0 deliverable (roadmap item 73), and nothing here is code.
+v0.3.1 deliverable (roadmap item 73), and nothing here is code.
 
 ## What it will be
 
