@@ -11,18 +11,18 @@ require (
 	go.opentelemetry.io/otel v1.46.0
 	go.opentelemetry.io/otel/trace v1.46.0
 	golang.org/x/net v0.58.0
-	gorbital.dev v0.2.1
-	gorbital.dev/gorbital v0.2.1
-	gorbital.dev/modules/auditpg v0.2.1
-	gorbital.dev/modules/auth v0.2.1
-	gorbital.dev/modules/flags v0.2.1
-	gorbital.dev/modules/jobs v0.2.1
-	gorbital.dev/modules/openapi v0.2.1
-	gorbital.dev/modules/orgs v0.2.1
-	gorbital.dev/modules/postgres v0.2.1
-	gorbital.dev/modules/ratelimitpg v0.2.1
-	gorbital.dev/modules/settings v0.2.1
-	gorbital.dev/modules/storage v0.2.1
+	gorbital.dev v0.3.0
+	gorbital.dev/gorbital v0.3.0
+	gorbital.dev/modules/auditpg v0.3.0
+	gorbital.dev/modules/auth v0.3.0
+	gorbital.dev/modules/flags v0.3.0
+	gorbital.dev/modules/jobs v0.3.0
+	gorbital.dev/modules/openapi v0.3.0
+	gorbital.dev/modules/orgs v0.3.0
+	gorbital.dev/modules/postgres v0.3.0
+	gorbital.dev/modules/ratelimitpg v0.3.0
+	gorbital.dev/modules/settings v0.3.0
+	gorbital.dev/modules/storage v0.3.0
 )
 
 require (
@@ -86,35 +86,12 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260831171406-18b4a7587f8a // indirect
 	google.golang.org/grpc v1.83.2 // indirect
 	google.golang.org/protobuf v1.36.12 // indirect
-	gorbital.dev/modules/devconsole v0.2.1 // indirect
-	gorbital.dev/modules/idempotency v0.2.1 // indirect
-	gorbital.dev/modules/mail/smtp v0.2.1 // indirect
-	gorbital.dev/modules/mail/suppressionpg v0.2.1 // indirect
-	gorbital.dev/modules/observability v0.2.1 // indirect
-	gorbital.dev/modules/releases v0.2.1 // indirect
-	gorbital.dev/modules/telemetry v0.2.1 // indirect
+	gorbital.dev/modules/devconsole v0.3.0 // indirect
+	gorbital.dev/modules/idempotency v0.3.0 // indirect
+	gorbital.dev/modules/mail/smtp v0.3.0 // indirect
+	gorbital.dev/modules/mail/suppressionpg v0.3.0 // indirect
+	gorbital.dev/modules/observability v0.3.0 // indirect
+	gorbital.dev/modules/releases v0.3.0 // indirect
+	gorbital.dev/modules/telemetry v0.3.0 // indirect
 	rsc.io/qr v0.2.0 // indirect
-)
-
-replace (
-	gorbital.dev => ../../..
-	gorbital.dev/gorbital => ../../../gorbital
-	gorbital.dev/modules/auditpg => ../../../modules/auditpg
-	gorbital.dev/modules/auth => ../../../modules/auth
-	gorbital.dev/modules/devconsole => ../../../modules/devconsole
-	gorbital.dev/modules/flags => ../../../modules/flags
-	gorbital.dev/modules/idempotency => ../../../modules/idempotency
-	gorbital.dev/modules/jobs => ../../../modules/jobs
-	gorbital.dev/modules/mail/resend => ../../../modules/mail/resend
-	gorbital.dev/modules/mail/smtp => ../../../modules/mail/smtp
-	gorbital.dev/modules/mail/suppressionpg => ../../../modules/mail/suppressionpg
-	gorbital.dev/modules/observability => ../../../modules/observability
-	gorbital.dev/modules/openapi => ../../../modules/openapi
-	gorbital.dev/modules/orgs => ../../../modules/orgs
-	gorbital.dev/modules/postgres => ../../../modules/postgres
-	gorbital.dev/modules/ratelimitpg => ../../../modules/ratelimitpg
-	gorbital.dev/modules/releases => ../../../modules/releases
-	gorbital.dev/modules/settings => ../../../modules/settings
-	gorbital.dev/modules/storage => ../../../modules/storage
-	gorbital.dev/modules/telemetry => ../../../modules/telemetry
 )

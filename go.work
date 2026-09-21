@@ -1,0 +1,58 @@
+go 1.26.0
+
+// Every application in this repository, one Go module each. byo-identity has
+// no go.mod yet (it is a v0.3 deliverable); add it here when its code lands.
+use (
+	./admin-tool
+	./invoicing
+	./mobile-backend
+	./payments
+	./plateful
+	./shelfie
+)
+
+// The applications require the published gorbital modules at v0.3.0, which is
+// not on the module proxy yet, so the workspace points them at a checkout of
+// the library beside this one:
+//
+//	git clone https://github.com/gorbital/gorbital ../gorbital
+//
+// Without that directory every go command in this repository fails with
+// "replacement directory ../gorbital does not exist"; the README says so.
+//
+// These are replace directives and not `go work use` lines on purpose. A use
+// line makes the library a main module of the workspace, but the go command
+// still resolves the version each application's go.mod requires — v0.3.0 —
+// from the proxy while it loads the module graph, and fails before it builds
+// anything. A replace directive in go.work is the only thing that keeps an
+// unpublished version out of the resolver.
+//
+// Delete this whole block the day gorbital v0.3.0 is published. The
+// applications then build against the release, with no local checkout, which
+// is the point of them.
+//
+// To develop against a checkout somewhere else, change ../gorbital here, or
+// run `go work edit -replace gorbital.dev=<path>` for each module.
+replace (
+	gorbital.dev => ../gorbital
+	gorbital.dev/gorbital => ../gorbital/gorbital
+	gorbital.dev/modules/auditpg => ../gorbital/modules/auditpg
+	gorbital.dev/modules/auth => ../gorbital/modules/auth
+	gorbital.dev/modules/devconsole => ../gorbital/modules/devconsole
+	gorbital.dev/modules/flags => ../gorbital/modules/flags
+	gorbital.dev/modules/idempotency => ../gorbital/modules/idempotency
+	gorbital.dev/modules/jobs => ../gorbital/modules/jobs
+	gorbital.dev/modules/jwt => ../gorbital/modules/jwt
+	gorbital.dev/modules/mail/resend => ../gorbital/modules/mail/resend
+	gorbital.dev/modules/mail/smtp => ../gorbital/modules/mail/smtp
+	gorbital.dev/modules/mail/suppressionpg => ../gorbital/modules/mail/suppressionpg
+	gorbital.dev/modules/observability => ../gorbital/modules/observability
+	gorbital.dev/modules/openapi => ../gorbital/modules/openapi
+	gorbital.dev/modules/orgs => ../gorbital/modules/orgs
+	gorbital.dev/modules/postgres => ../gorbital/modules/postgres
+	gorbital.dev/modules/ratelimitpg => ../gorbital/modules/ratelimitpg
+	gorbital.dev/modules/releases => ../gorbital/modules/releases
+	gorbital.dev/modules/settings => ../gorbital/modules/settings
+	gorbital.dev/modules/storage => ../gorbital/modules/storage
+	gorbital.dev/modules/telemetry => ../gorbital/modules/telemetry
+)
